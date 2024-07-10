@@ -76,7 +76,7 @@ public class Variants {
         }
 
         if (mob == EntityType.CAT) {
-            return new MobVariant(new Identifier("tabby"), 1);
+            return new MobVariant(Identifier.of("tabby"), 1);
         }
 
         return new MobVariant(MoreMobVariants.id("default"), 1);
@@ -257,9 +257,9 @@ public class Variants {
 
         if (parent1Nbt.contains(MoreMobVariants.NBT_KEY) && parent2Nbt.contains(MoreMobVariants.NBT_KEY)) {
             String[] parent1VariantId = parent1Nbt.getString(MoreMobVariants.NBT_KEY).split(":");
-            MobVariant parent1Variant = Variants.getVariant(mob, new Identifier(parent1VariantId[0], parent1VariantId[1]));
+            MobVariant parent1Variant = Variants.getVariant(mob, Identifier.of(parent1VariantId[0], parent1VariantId[1]));
             String[] parent2VariantId = parent2Nbt.getString(MoreMobVariants.NBT_KEY).split(":");
-            MobVariant parent2Variant = Variants.getVariant(mob, new Identifier(parent2VariantId[0], parent2VariantId[1]));
+            MobVariant parent2Variant = Variants.getVariant(mob, Identifier.of(parent2VariantId[0], parent2VariantId[1]));
 
             return Variants.getRandomVariant(mob, world.getRandom().nextLong(), world.getBiome(parent1.getBlockPos()), new BreedingResultData(parent1Variant, parent2Variant), null);
         } else {
@@ -290,18 +290,18 @@ public class Variants {
 
         defaultVariants = new HashMap<EntityType<?>, ArrayList<MobVariant>>();
         defaultVariants.put(EntityType.CAT, new ArrayList<>(List.of(
-                new MobVariant(new Identifier("all_black"), 1)
+                new MobVariant(Identifier.of("all_black"), 1)
                         .addModifier(new MoonPhaseModifier(0.9f)),
-                new MobVariant(new Identifier("black"), 1),
-                new MobVariant(new Identifier("british_shorthair"), 1),
-                new MobVariant(new Identifier("calico"), 1),
-                new MobVariant(new Identifier("jellie"), 1),
-                new MobVariant(new Identifier("persian"), 1),
-                new MobVariant(new Identifier("ragdoll"), 1),
-                new MobVariant(new Identifier("red"), 1),
-                new MobVariant(new Identifier("siamese"), 1),
-                new MobVariant(new Identifier("tabby"), 1),
-                new MobVariant(new Identifier("white"), 1),
+                new MobVariant(Identifier.of("black"), 1),
+                new MobVariant(Identifier.of("british_shorthair"), 1),
+                new MobVariant(Identifier.of("calico"), 1),
+                new MobVariant(Identifier.of("jellie"), 1),
+                new MobVariant(Identifier.of("persian"), 1),
+                new MobVariant(Identifier.of("ragdoll"), 1),
+                new MobVariant(Identifier.of("red"), 1),
+                new MobVariant(Identifier.of("siamese"), 1),
+                new MobVariant(Identifier.of("tabby"), 1),
+                new MobVariant(Identifier.of("white"), 1),
                 new MobVariant(MoreMobVariants.id("doug"), 1),
                 new MobVariant(MoreMobVariants.id("gray_tabby"), 1),
                 new MobVariant(MoreMobVariants.id("handsome"), 1),

@@ -13,7 +13,6 @@
     "SkeletonVariantsMixin",
     "SpiderVariantsMixin",
     "CowVariantsMixin",
-    "WolfVariantsMixin",
     "ZombieVariantsMixin"
   ],
   "client": [
@@ -25,7 +24,6 @@
     "SkeletonRendererMixin",
     "SpiderRendererMixin",
     "CowRendererMixin",
-    "WolfRendererMixin",
     "ZombieRendererMixin",
     "PigFlowerMixin",
     "SheepWoolFeatureMixin",

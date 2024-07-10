@@ -3,6 +3,7 @@ package com.github.nyuppo.mixin;
 import com.github.nyuppo.MoreMobVariants;
 import com.github.nyuppo.config.Variants;
 import com.github.nyuppo.networking.MMVNetworkingConstants;
+import com.github.nyuppo.networking.ServerRespondBasicVariantPayload;
 import com.github.nyuppo.variant.MobVariant;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -36,7 +37,7 @@ public class ZombieVariantsMixin extends MobEntityVariantsMixin {
     protected void onReadCustomDataFromNbt(NbtCompound nbt, CallbackInfo ci) {
         if (!nbt.getString(MoreMobVariants.NBT_KEY).isEmpty()) {
             if (nbt.getString(MoreMobVariants.NBT_KEY).contains(":")) {
-                variant = Variants.getVariant(EntityType.ZOMBIE, new Identifier(nbt.getString(MoreMobVariants.NBT_KEY)));
+                variant = Variants.getVariant(EntityType.ZOMBIE, Identifier.of(nbt.getString(MoreMobVariants.NBT_KEY)));
             } else {
                 variant = Variants.getVariant(EntityType.ZOMBIE, MoreMobVariants.id(nbt.getString(MoreMobVariants.NBT_KEY)));
             }
@@ -49,17 +50,15 @@ public class ZombieVariantsMixin extends MobEntityVariantsMixin {
         MinecraftServer server = ((Entity)(Object)this).getServer();
         if (server != null) {
             server.getPlayerManager().getPlayerList().forEach((player) -> {
-                PacketByteBuf updateBuf = PacketByteBufs.create();
-                updateBuf.writeInt(((Entity)(Object)this).getId());
-                updateBuf.writeString(variant.getIdentifier().toString());
 
-                ServerPlayNetworking.send(player, MMVNetworkingConstants.SERVER_RESPOND_BASIC_VARIANT_ID, updateBuf);
+
+                ServerPlayNetworking.send(player, new ServerRespondBasicVariantPayload(((Entity) (Object) this).getId(), variant.getIdentifier().toString()));
             });
         }
     }
 
     @Override
-    protected void onInitialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt, CallbackInfoReturnable<EntityData> ci) {
+    protected void onInitialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, CallbackInfoReturnable<EntityData> ci) {
         variant = Variants.getRandomVariant(EntityType.ZOMBIE, world.getRandom().nextLong(), world.getBiome(((ZombieEntity)(Object)this).getBlockPos()), null, world.getMoonSize());
     }
 }

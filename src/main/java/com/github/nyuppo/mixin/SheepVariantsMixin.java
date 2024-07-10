@@ -4,6 +4,8 @@ import com.github.nyuppo.MoreMobVariants;
 import com.github.nyuppo.config.SheepHornSettings;
 import com.github.nyuppo.config.Variants;
 import com.github.nyuppo.networking.MMVNetworkingConstants;
+import com.github.nyuppo.networking.ServerRespondBasicVariantPayload;
+import com.github.nyuppo.networking.ServerRespondVariantPayload;
 import com.github.nyuppo.variant.MobVariant;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -39,11 +41,12 @@ public abstract class SheepVariantsMixin extends MobEntityVariantsMixin {
         nbt.putString(MoreMobVariants.SHEEP_HORN_COLOUR_NBT_KEY, hornColour);
     }
 
+    @SuppressWarnings("UnreachableCode")
     @Override
     protected void onReadCustomDataFromNbt(NbtCompound nbt, CallbackInfo ci) {
         if (!nbt.getString(MoreMobVariants.NBT_KEY).isEmpty()) {
             if (nbt.getString(MoreMobVariants.NBT_KEY).contains(":")) {
-                variant = Variants.getVariant(EntityType.SHEEP, new Identifier(nbt.getString(MoreMobVariants.NBT_KEY)));
+                variant = Variants.getVariant(EntityType.SHEEP, Identifier.of(nbt.getString(MoreMobVariants.NBT_KEY)));
             } else {
                 variant = Variants.getVariant(EntityType.SHEEP, MoreMobVariants.id(nbt.getString(MoreMobVariants.NBT_KEY)));
             }
@@ -57,21 +60,13 @@ public abstract class SheepVariantsMixin extends MobEntityVariantsMixin {
         MinecraftServer server = ((Entity)(Object)this).getServer();
         if (server != null) {
             server.getPlayerManager().getPlayerList().forEach((player) -> {
-                PacketByteBuf updateBuf = PacketByteBufs.create();
-                updateBuf.writeInt(((Entity)(Object)this).getId());
-                updateBuf.writeString(variant.getIdentifier().toString());
-                //all three values in the "regular" packet post update
-                updateBuf.writeBoolean(false);
-                updateBuf.writeVarInt(0);
-                updateBuf.writeString(hornColour);
-
-                ServerPlayNetworking.send(player, MMVNetworkingConstants.SERVER_RESPOND_VARIANT_ID, updateBuf);
+                ServerPlayNetworking.send(player, new ServerRespondVariantPayload(((Entity) (Object) this).getId(), variant.getIdentifier().toString(), false, 0, hornColour));
             });
         }
     }
 
     @Override
-    protected void onInitialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt, CallbackInfoReturnable<EntityData> ci) {
+    protected void onInitialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData,  CallbackInfoReturnable<EntityData> ci) {
         variant = Variants.getRandomVariant(EntityType.SHEEP, world.getRandom().nextLong(), world.getBiome(((SheepEntity)(Object)this).getBlockPos()), null, world.getMoonSize());
 
         SheepHornSettings.SheepHornColour colour = SheepHornSettings.getRandomSheepHornColour(world.getRandom(), world.getBiome(((SheepEntity)(Object)this).getBlockPos()));
